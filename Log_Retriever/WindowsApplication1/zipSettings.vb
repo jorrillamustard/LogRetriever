@@ -123,6 +123,10 @@ endoffunc:
         Dim R1WCFLogs As String = "\\" + WCFServer + "\C$\Users\Public\Documents\Resolution1Logs\"
         Dim R1Logs2 As String = "\\" + ProcServer + "\C$\Users\Public\Documents\AccessData\"
         Dim R1MapLogs As String = "C:\Users\Public\Documents\AccessData\"
+        Dim R1WMLogs As String = ""
+
+
+
 
         'Get the location of Processing Logs
         If ProcServer = "localhost" Then
@@ -183,6 +187,18 @@ endoffunc:
                             My.Computer.FileSystem.CopyFile(f, Path.Combine(temp, Path.GetFileName(f)), True)
                         End If
                     Next
+
+                    If WMServer = "localhost" Then
+
+                    Else
+                        R1WMLogs = "\\" + WMServer + "\C$\Users\Public\Documents\Resolution1Logs\"
+                        For Each f In Directory.GetFiles(R1WMLogs, item + ".*", SearchOption.AllDirectories)
+                            If File.Exists(f) And Not WMServer = "localhost" Then
+                                My.Computer.FileSystem.CopyFile(f, Path.Combine(temp, Path.GetFileName(f)), True)
+                            End If
+                        Next
+                    End If
+
                 End If
             Next
 
