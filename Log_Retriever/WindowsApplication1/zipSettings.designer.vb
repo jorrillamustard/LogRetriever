@@ -86,7 +86,7 @@ Partial Class zipSettings
         'Label2
         '
         Me.Label2.AutoSize = True
-        Me.Label2.Location = New System.Drawing.Point(235, 40)
+        Me.Label2.Location = New System.Drawing.Point(362, 40)
         Me.Label2.Name = "Label2"
         Me.Label2.Size = New System.Drawing.Size(110, 17)
         Me.Label2.TabIndex = 5
