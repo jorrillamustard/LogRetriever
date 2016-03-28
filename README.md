@@ -10,9 +10,9 @@ using the move buttons >> and << you can highlight and move files between the av
 The Days text box allows you to specify the amount of days in the past to retrieve logs. It defaults to 30 as that is a pretty standard amount of time for any issue that would require log retrieval. Setting the value blank will allow the retrieval of all logs in the logging folders no matter the date.
 
 To enable log retrieval on distributed installs of the Fidelis Endpoint Application you must have do three things:
-1. The application will be run from the Web server, where the MAP application peice is installed.
-2. The LogRetriever.exe.config in the same folder as the logretriever.exe
-3. The DistributedInstall Key in the LogRetriever.exe.config must be set to true
+- The application will be run from the Web server, where the MAP application peice is installed.
+- The LogRetriever.exe.config in the same folder as the logretriever.exe
+- The DistributedInstall Key in the LogRetriever.exe.config must be set to true
 
 This tells the application that it needs to search other computers for the logs. You will also need to update the configuration file with the names of the servers depending on what is installed. The servers needed by their componenents are below:
 
