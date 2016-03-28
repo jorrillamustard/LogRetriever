@@ -1,9 +1,9 @@
-﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()> _
+﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()>
 Partial Class zipSettings
     Inherits System.Windows.Forms.Form
 
     'Form overrides dispose to clean up the component list.
-    <System.Diagnostics.DebuggerNonUserCode()> _
+    <System.Diagnostics.DebuggerNonUserCode()>
     Protected Overrides Sub Dispose(ByVal disposing As Boolean)
         Try
             If disposing AndAlso components IsNot Nothing Then
@@ -20,7 +20,7 @@ Partial Class zipSettings
     'NOTE: The following procedure is required by the Windows Form Designer
     'It can be modified using the Windows Form Designer.  
     'Do not modify it using the code editor.
-    <System.Diagnostics.DebuggerStepThrough()> _
+    <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(zipSettings))
         Me.lstOptions = New System.Windows.Forms.ListBox()
@@ -31,32 +31,34 @@ Partial Class zipSettings
         Me.Label2 = New System.Windows.Forms.Label()
         Me.Button1 = New System.Windows.Forms.Button()
         Me.chkSelectAll = New System.Windows.Forms.CheckBox()
+        Me.txtDays = New System.Windows.Forms.TextBox()
+        Me.Label3 = New System.Windows.Forms.Label()
         Me.SuspendLayout()
         '
         'lstOptions
         '
         Me.lstOptions.FormattingEnabled = True
         Me.lstOptions.ItemHeight = 16
-        Me.lstOptions.Items.AddRange(New Object() {"AnnotationConversionLog", "BusinessServices", "BusinessServicesCommon", "BusinessServicesCommon_Endpoints", "BusinessServicesCommon_EndpointTrace", "BusinessServicesCommon_StabilityMonitoring", "DatabaseUpgrade", "Infrastructure", "IntegrationService", "License", "MAP_log", "Orchestration", "ProcessingHost_error", "ProcessingHost_info", "ProcessingManager_info", "ProductionSetObjectConversionLog", "ProcessingServices", "RIASqlTraceLog", "site_server", "ThreatBridge", "WorkDistribution", "WorkManager"})
+        Me.lstOptions.Items.AddRange(New Object() {"AnnotationConversionLog", "BusinessServices", "BusinessServicesCommon", "BusinessServicesCommon_Endpoints", "BusinessServicesCommon_EndpointTrace", "BusinessServicesCommon_StabilityMonitoring", "DatabaseUpgrade", "Infrastructure", "IntegrationService", "License", "MAP_log", "Orchestration", "ProcessingHost_error", "ProcessingHost_info", "ProcessingManager_info", "ProductionSetObjectConversionLog", "ProcessingServices", "SearchLog", "site_server", "ThreatBridge", "WorkDistribution", "WorkManager"})
         Me.lstOptions.Location = New System.Drawing.Point(12, 63)
         Me.lstOptions.Name = "lstOptions"
         Me.lstOptions.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended
-        Me.lstOptions.Size = New System.Drawing.Size(178, 196)
+        Me.lstOptions.Size = New System.Drawing.Size(274, 196)
         Me.lstOptions.TabIndex = 0
         '
         'lstSelected
         '
         Me.lstSelected.FormattingEnabled = True
         Me.lstSelected.ItemHeight = 16
-        Me.lstSelected.Location = New System.Drawing.Point(255, 63)
+        Me.lstSelected.Location = New System.Drawing.Point(365, 63)
         Me.lstSelected.Name = "lstSelected"
         Me.lstSelected.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended
-        Me.lstSelected.Size = New System.Drawing.Size(156, 196)
+        Me.lstSelected.Size = New System.Drawing.Size(251, 196)
         Me.lstSelected.TabIndex = 1
         '
         'btnMove
         '
-        Me.btnMove.Location = New System.Drawing.Point(196, 112)
+        Me.btnMove.Location = New System.Drawing.Point(292, 114)
         Me.btnMove.Name = "btnMove"
         Me.btnMove.Size = New System.Drawing.Size(53, 23)
         Me.btnMove.TabIndex = 2
@@ -65,7 +67,7 @@ Partial Class zipSettings
         '
         'btnRemove
         '
-        Me.btnRemove.Location = New System.Drawing.Point(196, 182)
+        Me.btnRemove.Location = New System.Drawing.Point(292, 183)
         Me.btnRemove.Name = "btnRemove"
         Me.btnRemove.Size = New System.Drawing.Size(53, 23)
         Me.btnRemove.TabIndex = 3
@@ -102,18 +104,37 @@ Partial Class zipSettings
         'chkSelectAll
         '
         Me.chkSelectAll.AutoSize = True
-        Me.chkSelectAll.Location = New System.Drawing.Point(265, 285)
+        Me.chkSelectAll.Location = New System.Drawing.Point(493, 287)
         Me.chkSelectAll.Name = "chkSelectAll"
         Me.chkSelectAll.Size = New System.Drawing.Size(123, 21)
         Me.chkSelectAll.TabIndex = 7
         Me.chkSelectAll.Text = "Select All Logs"
         Me.chkSelectAll.UseVisualStyleBackColor = True
         '
+        'txtDays
+        '
+        Me.txtDays.Location = New System.Drawing.Point(339, 286)
+        Me.txtDays.Name = "txtDays"
+        Me.txtDays.Size = New System.Drawing.Size(25, 22)
+        Me.txtDays.TabIndex = 8
+        Me.txtDays.Text = "30"
+        '
+        'Label3
+        '
+        Me.Label3.AutoSize = True
+        Me.Label3.Location = New System.Drawing.Point(289, 287)
+        Me.Label3.Name = "Label3"
+        Me.Label3.Size = New System.Drawing.Size(44, 17)
+        Me.Label3.TabIndex = 9
+        Me.Label3.Text = "Days:"
+        '
         'zipSettings
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(423, 332)
+        Me.ClientSize = New System.Drawing.Size(634, 322)
+        Me.Controls.Add(Me.Label3)
+        Me.Controls.Add(Me.txtDays)
         Me.Controls.Add(Me.chkSelectAll)
         Me.Controls.Add(Me.Button1)
         Me.Controls.Add(Me.Label2)
@@ -138,4 +159,6 @@ Partial Class zipSettings
     Friend WithEvents Label2 As Label
     Friend WithEvents Button1 As Button
     Friend WithEvents chkSelectAll As CheckBox
+    Friend WithEvents txtDays As TextBox
+    Friend WithEvents Label3 As Label
 End Class

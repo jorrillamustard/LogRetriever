@@ -234,3 +234,5 @@ _Pvt_Extensions
 
 # FAKE - F# Make
 .fake/
+/Log_Retriever/WindowsApplication1/Travel-Swiss.ico
+/Log_Retriever/WindowsApplication1/Travel-Swiss-Army-Knife-icon.ico
