@@ -113,6 +113,7 @@ endoffunc:
 
     Function DistributedZip()
         'initilize paths and variables needed in the function
+        Dim MAPServer As String = asSettings.Settings.Item("MAPServer").Value
         Dim WCFServer As String = asSettings.Settings.Item("WCFServer").Value
         Dim ProcServer As String = asSettings.Settings.Item("ProcessingServer").Value
         Dim SSServer As String = asSettings.Settings.Item("SiteServer").Value
@@ -122,7 +123,7 @@ endoffunc:
         Dim count As Integer = count + 1
         Dim R1WCFLogs As String = "\\" + WCFServer + "\C$\Users\Public\Documents\Resolution1Logs\"
         Dim R1Logs2 As String = "\\" + ProcServer + "\C$\Users\Public\Documents\AccessData\"
-        Dim R1MapLogs As String = "C:\Users\Public\Documents\AccessData\"
+        Dim R1MapLogs As String = ""
         Dim R1WMLogs As String = ""
 
 
@@ -182,11 +183,6 @@ endoffunc:
                             My.Computer.FileSystem.CopyFile(f, Path.Combine(temp, Path.GetFileName(f)), True)
                         End If
                     Next
-                    For Each f In Directory.GetFiles(R1MapLogs, item + ".*", SearchOption.AllDirectories)
-                        If File.Exists(f) Then
-                            My.Computer.FileSystem.CopyFile(f, Path.Combine(temp, Path.GetFileName(f)), True)
-                        End If
-                    Next
 
                     If WMServer = "localhost" Then
 
@@ -194,6 +190,17 @@ endoffunc:
                         R1WMLogs = "\\" + WMServer + "\C$\Users\Public\Documents\Resolution1Logs\"
                         For Each f In Directory.GetFiles(R1WMLogs, item + ".*", SearchOption.AllDirectories)
                             If File.Exists(f) And Not WMServer = "localhost" Then
+                                My.Computer.FileSystem.CopyFile(f, Path.Combine(temp, Path.GetFileName(f)), True)
+                            End If
+                        Next
+                    End If
+
+                    If MAPServer = "localhost" Then
+
+                    Else
+                        R1MapLogs = "\\" + MAPServer + "\C$\Users\Public\Documents\AcessData\"
+                        For Each f In Directory.GetFiles(R1WMLogs, item + ".*", SearchOption.AllDirectories)
+                            If File.Exists(f) And Not MAPServer = "localhost" Then
                                 My.Computer.FileSystem.CopyFile(f, Path.Combine(temp, Path.GetFileName(f)), True)
                             End If
                         Next

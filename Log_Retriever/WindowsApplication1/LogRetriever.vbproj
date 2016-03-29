@@ -63,7 +63,7 @@
     <OptionInfer>On</OptionInfer>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>Retriever.ico</ApplicationIcon>
+    <ApplicationIcon>RetrieverFLogo.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationManifest>My Project\app.manifest</ApplicationManifest>
@@ -145,6 +145,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Retriever.ico" />
+    <Content Include="RetrieverFLogo.ico" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5.2">
