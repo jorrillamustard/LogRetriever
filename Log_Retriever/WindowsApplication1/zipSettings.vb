@@ -59,10 +59,10 @@ endoffunc:
         Dim R1Logs As String = "C:\Users\Public\Documents\Resolution1Logs\"
         Dim ProcLogs As String = My.Computer.Registry.GetValue(
     "HKEY_LOCAL_MACHINE\SOFTWARE\AccessData\PStore\EvidenceProcessor", "processingstatedirectory", Nothing)
-        Dim R1Logs2 As String = "C:\Users\Public\Documents\AccessData\ResolutionOneLogs\"
+        Dim R1Logs2 As String = "C:\Users\Public\Documents\AccessData\"
         Dim R1SSLogs As String = getSSDirectory()
         Dim zipPath1 As String = "C:\Users\" + Environment.UserName + "\Documents\" + Now.ToString(format) + "R1Logs" + count.ToString + ".zip"
-        Dim temp As String = "C:\temp\LR\"
+        Dim temp As String = "C:\Users\" + Environment.UserName + "\Documents\LRTemp\"
         Dim temp2 As String = temp + "Site_Server.log"
 
 
@@ -110,7 +110,6 @@ endoffunc:
     End Function
 
 
-
     Function DistributedZip()
         'initilize paths and variables needed in the function
         Dim MAPServer As String = asSettings.Settings.Item("MAPServer").Value
@@ -118,6 +117,7 @@ endoffunc:
         Dim ProcServer As String = asSettings.Settings.Item("ProcessingServer").Value
         Dim SSServer As String = asSettings.Settings.Item("SiteServer").Value
         Dim WMServer As String = asSettings.Settings.Item("CollectionWorkManager").Value
+        Dim TBServer As String = asSettings.Settings.Item("TBServer").Value
         Dim ProcLogs As String
         Dim R1SSLogs As String = ""
         Dim count As Integer = count + 1
@@ -206,6 +206,16 @@ endoffunc:
                         Next
                     End If
 
+                    If TBServer = "localhost" Then
+
+                    Else
+                        Dim TBLogs = "\\" + TBServer + "\C$\Users\Public\Documents\Resolution1Logs\"
+                        For Each f In Directory.GetFiles(TBLogs, item + ".*", SearchOption.AllDirectories)
+                            If File.Exists(f) And Not TBServer = "localhost" Then
+                                My.Computer.FileSystem.CopyFile(f, Path.Combine(temp, Path.GetFileName(f)), True)
+                            End If
+                        Next
+                    End If
                 End If
             Next
 
@@ -214,6 +224,7 @@ endoffunc:
             ZipFile.CreateFromDirectory(temp, zipPath1)
             Directory.Delete(temp, True)
             MessageBox.Show("Archive Created at: " + zipPath1)
+
         Catch ex As Exception
             MessageBox.Show(ex.ToString)
 
@@ -251,8 +262,10 @@ endoffunc:
 
     Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
         Try
-            If File.Exists(My.Application.Info.DirectoryPath + "\LogRetriever.exe.config") And asSettings.Settings.Item("DistributedInstall").Value = True Then
-                DistributedZip()
+            If File.Exists(My.Application.Info.DirectoryPath + "\LogRetriever.exe.config") Then
+                If asSettings.Settings.Item("DistributedInstall").Value = True Then
+                    DistributedZip()
+                End If
             Else
                 zip()
             End If
