@@ -20,13 +20,15 @@ Public Class zipSettings
         Dim SS2 As String
         Dim flag = False
 
-
+        'MessageBox.Show(computer)
         For Each c In "ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray()
             If flag = False Then
                 SS = "\\" + computer + "\" + c + "$\Program Files\Resolution1\SiteServer"
                 SS2 = "\\" + computer + "\" + c + "$\Program Files\AccessData\SiteServer\"
+                'MessageBox.Show(SS + " " + SS2)
                 If (Not Directory.Exists(SS)) Then
                     flag = False
+
                 Else
                     flag = True
                     Return "\\" + computer + "\" + c + "$\Program Files\Resolution1\SiteServer\"
@@ -53,6 +55,40 @@ endoffunc:
     "HKEY_LOCAL_MACHINE\SOFTWARE\AccessData\PStore\Services", "INSTALLDIR", Nothing)
         Return readValue.ToString + "\SiteServer\"
     End Function
+
+    Function ChildSSLogs()
+        If asSettings.Settings.Item("ChildSiteServers").Value.Equals("") Then
+        Else
+
+            Dim CSS As String() = Nothing
+            CSS = asSettings.Settings.Item("ChildSiteServers").Value.Split(",")
+            Dim s As String
+            Dim c As Integer = 0
+            'MessageBox.Show(CSS(0))
+            'For Each s In CSS
+            'CSS(c) = s
+            'c = c + 1
+            'Next
+
+            c = 0
+            Dim logPath As String() = Nothing
+
+            Dim temp As String = "C:\temp\LR\"
+
+            For Each s In CSS
+
+                For Each f In Directory.GetFiles(checkLog(CSS(c)), "site_server.*", SearchOption.TopDirectoryOnly)
+                    'MessageBox.Show(f)
+                    If File.Exists(f) And CheckDates(f) = True Then
+                        ' MessageBox.Show(f)
+                        My.Computer.FileSystem.CopyFile(f, Path.Combine(temp, CSS(c)) + "." + Path.GetFileName(f), True)
+                    End If
+                Next
+
+            Next
+        End If
+    End Function
+
 
     Private Function zip()
         Dim count As Integer = count + 1
@@ -217,6 +253,7 @@ endoffunc:
                         Next
                     End If
                 End If
+                ChildSSLogs()
             Next
 
             'My.Computer.FileSystem.CopyFile(R1SSLogs, temp2, True)
