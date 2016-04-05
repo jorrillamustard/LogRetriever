@@ -1,10 +1,12 @@
 ﻿Imports System.IO
 Imports System.IO.Compression
 Imports System.Configuration
-
-
+Imports System.Reflection
+Imports Outlook = Microsoft.Office.Interop.Outlook
+'Main application class
 Public Class zipSettings
     Dim format As String = "M-d-yyyy-HH-mm-ss"
+    Dim globalZip As String
 
 
     Dim cAppConfig As Configuration = ConfigurationManager.OpenExeConfiguration(My.Application.Info.DirectoryPath + "\LogRetriever.exe")
@@ -14,6 +16,7 @@ Public Class zipSettings
 
     End Sub
 
+    'Checks for the location of SS logs
     Private Function checkLog(computer As String)
 
         Dim SS As String
@@ -25,12 +28,13 @@ Public Class zipSettings
             If flag = False Then
                 SS = "\\" + computer + "\" + c + "$\Program Files\Resolution1\SiteServer"
                 SS2 = "\\" + computer + "\" + c + "$\Program Files\AccessData\SiteServer\"
-                'MessageBox.Show(SS + " " + SS2)
+                '  MessageBox.Show(SS + " " + SS2)
                 If (Not Directory.Exists(SS)) Then
                     flag = False
 
                 Else
                     flag = True
+                    'MessageBox.Show(SS)
                     Return "\\" + computer + "\" + c + "$\Program Files\Resolution1\SiteServer\"
 
                 End If
@@ -50,12 +54,14 @@ endoffunc:
 
     End Function
 
+    'Reads Registry for install location of SiteServer - Localhost
     Function getSSDirectory()
         Dim readValue = My.Computer.Registry.GetValue(
     "HKEY_LOCAL_MACHINE\SOFTWARE\AccessData\PStore\Services", "INSTALLDIR", Nothing)
         Return readValue.ToString + "\SiteServer\"
     End Function
 
+    'Gets logs from Child Site Servers
     Function ChildSSLogs()
         If asSettings.Settings.Item("ChildSiteServers").Value.Equals("") Then
         Else
@@ -84,12 +90,40 @@ endoffunc:
                         My.Computer.FileSystem.CopyFile(f, Path.Combine(temp, CSS(c)) + "." + Path.GetFileName(f), True)
                     End If
                 Next
+                'c = c + 1
+            Next
+        End If
+    End Function
+
+    'gets logs from all WorkManagers
+    Function WMLogs(t As String)
+        If asSettings.Settings.Item("WorkManager").Value.Equals("") Then
+        Else
+
+            Dim WM As String() = Nothing
+            WM = asSettings.Settings.Item("WorkManager").Value.Split(",")
+
+
+            Dim temp As String = "C:\temp\LR\"
+            Dim R1WMLogs As String = Nothing
+
+            For Each w In WM
+
+                R1WMLogs = "\\" + w + "\C$\Users\Public\Documents\Resolution1Logs\"
+                'MessageBox.Show(R1WMLogs)
+                For Each f In Directory.GetFiles(R1WMLogs, t + ".*", SearchOption.TopDirectoryOnly)
+
+                    If File.Exists(f) And CheckDates(f) = True Then
+                        'MessageBox.Show(WM(c))
+                        My.Computer.FileSystem.CopyFile(f, Path.Combine(temp, w) + "." + Path.GetFileName(f), True)
+                    End If
+                Next
 
             Next
         End If
     End Function
 
-
+    'Gathers and Zips the logs in the temp folder - Localhost
     Private Function zip()
         Dim count As Integer = count + 1
         Dim R1Logs As String = "C:\Users\Public\Documents\Resolution1Logs\"
@@ -139,20 +173,21 @@ endoffunc:
             ZipFile.CreateFromDirectory(temp, zipPath1)
             Directory.Delete(temp, True)
             MessageBox.Show("Archive Created at: " + zipPath1)
+            btnEmail.Visible = True
         Catch ex As Exception
             MessageBox.Show(ex.ToString)
 
         End Try
     End Function
 
-
+    'Gathers and zips the logs in the temp folder for distributed installs
     Function DistributedZip()
         'initilize paths and variables needed in the function
         Dim MAPServer As String = asSettings.Settings.Item("MAPServer").Value
         Dim WCFServer As String = asSettings.Settings.Item("WCFServer").Value
         Dim ProcServer As String = asSettings.Settings.Item("ProcessingServer").Value
         Dim SSServer As String = asSettings.Settings.Item("SiteServer").Value
-        Dim WMServer As String = asSettings.Settings.Item("CollectionWorkManager").Value
+        Dim WMServer As String = asSettings.Settings.Item("WorkManager").Value
         Dim TBServer As String = asSettings.Settings.Item("TBServer").Value
         Dim ProcLogs As String
         Dim R1SSLogs As String = ""
@@ -163,7 +198,7 @@ endoffunc:
         Dim R1WMLogs As String = ""
 
 
-
+        Dim zipPath1 As String = "C:\Users\" + Environment.UserName + "\Documents\" + Now.ToString(format) + "R1Logs.zip"
 
         'Get the location of Processing Logs
         If ProcServer = "localhost" Then
@@ -183,7 +218,6 @@ endoffunc:
         End If
 
         'set the zip path as the current users document folder
-        Dim zipPath1 As String = "C:\Users\" + Environment.UserName + "\Documents\" + Now.ToString(format) + "R1Logs" + count.ToString + ".zip"
 
         'declare temporary storage for transferring logs
         Dim temp As String = "C:\temp\LR\"
@@ -201,6 +235,18 @@ endoffunc:
                             My.Computer.FileSystem.CopyFile(f, Path.Combine(temp, Path.GetFileName(f)), True)
                         End If
                     Next
+
+                ElseIf item.ToString = "WorkManager" Then
+
+                    WMLogs(item)
+                    ' R1WMLogs = "\\" + WMServer + "\C$\Users\Public\Documents\Resolution1Logs\"
+                    ' For Each f In Directory.GetFiles(R1WMLogs, item + ".*", SearchOption.AllDirectories)
+                    'If File.Exists(f) And Not WMServer = "localhost" Then
+                    'My.Computer.FileSystem.CopyFile(f, Path.Combine(temp, Path.GetFileName(f)), True)
+                    'End If
+                    'Next
+
+
                 Else
                     For Each f In Directory.GetFiles(R1WCFLogs, item + ".*", SearchOption.AllDirectories)
                         If File.Exists(f) And CheckDates(f) Then
@@ -220,22 +266,13 @@ endoffunc:
                         End If
                     Next
 
-                    If WMServer = "localhost" Then
 
-                    Else
-                        R1WMLogs = "\\" + WMServer + "\C$\Users\Public\Documents\Resolution1Logs\"
-                        For Each f In Directory.GetFiles(R1WMLogs, item + ".*", SearchOption.AllDirectories)
-                            If File.Exists(f) And Not WMServer = "localhost" Then
-                                My.Computer.FileSystem.CopyFile(f, Path.Combine(temp, Path.GetFileName(f)), True)
-                            End If
-                        Next
-                    End If
 
                     If MAPServer = "localhost" Then
 
                     Else
-                        R1MapLogs = "\\" + MAPServer + "\C$\Users\Public\Documents\AcessData\"
-                        For Each f In Directory.GetFiles(R1WMLogs, item + ".*", SearchOption.AllDirectories)
+                        R1MapLogs = "\\" + MAPServer + "\C$\Users\Public\Documents\AccessData\"
+                        For Each f In Directory.GetFiles(R1MapLogs, item + ".*", SearchOption.AllDirectories)
                             If File.Exists(f) And Not MAPServer = "localhost" Then
                                 My.Computer.FileSystem.CopyFile(f, Path.Combine(temp, Path.GetFileName(f)), True)
                             End If
@@ -253,25 +290,23 @@ endoffunc:
                         Next
                     End If
                 End If
+
                 ChildSSLogs()
             Next
 
             'My.Computer.FileSystem.CopyFile(R1SSLogs, temp2, True)
-
+            globalZip = zipPath1
             ZipFile.CreateFromDirectory(temp, zipPath1)
             Directory.Delete(temp, True)
             MessageBox.Show("Archive Created at: " + zipPath1)
-
+            btnEmail.Visible = True
         Catch ex As Exception
             MessageBox.Show(ex.ToString)
 
         End Try
     End Function
 
-    Private Sub lstOptions_SelectedIndexChanged(sender As Object, e As EventArgs) Handles lstOptions.SelectedIndexChanged
-
-    End Sub
-
+    'Button Function to move logs from available to archive list
     Private Sub btnMove_Click(sender As Object, e As EventArgs) Handles btnMove.Click
 
 
@@ -286,6 +321,7 @@ endoffunc:
 
     End Sub
 
+    'Button Function to move logs from archive list back to available
     Private Sub btnRemove_Click(sender As Object, e As EventArgs) Handles btnRemove.Click
         Dim selectedItems = (From i In lstSelected.SelectedItems).ToArray()
 
@@ -297,6 +333,7 @@ endoffunc:
         lstSelected.EndUpdate()
     End Sub
 
+    'button function to start the gather and zip process - Checks for config and if its a distributed install
     Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
         Try
             If File.Exists(My.Application.Info.DirectoryPath + "\LogRetriever.exe.config") Then
@@ -314,6 +351,7 @@ endoffunc:
 
     End Sub
 
+    'Check box function to move all logs between lists
     Private Sub chkSelectAll_CheckedChanged(sender As Object, e As EventArgs) Handles chkSelectAll.CheckedChanged
 
         If chkSelectAll.Checked Then
@@ -328,6 +366,7 @@ endoffunc:
 
     End Sub
 
+    'Checks the dates of the logs per the defined amount on in txtdays textbox
     Function CheckDates(f As String)
         If txtDays.Text.Equals("") Then
             Return True
@@ -347,4 +386,48 @@ endoffunc:
     End Function
 
 
+    'Email
+    Private Sub btnEmail_Click(sender As Object, e As EventArgs) Handles btnEmail.Click
+
+
+        Dim officetype As Type = Type.GetTypeFromProgID("Outlook.Application")
+        Try
+            If officetype Is Nothing Then
+
+                Dim address As String = "support@fidelissecurity.com"
+                Dim subject As String = "Fidelis Endpoint Application Logs"
+                Dim body As String = "Please find the attached logs for current issues"
+                Dim attach As String = globalZip
+                Dim mailto As String
+
+                mailto = String.Format("mailto:{0}?Subject={1}&Body={2}&Attach={3}", address, subject, body, attach)
+
+                System.Diagnostics.Process.Start(mailto)
+            Else
+
+                ' Create an Outlook application.
+                Dim OutlookMessage As Outlook.MailItem
+                Dim AppOutlook As Outlook.Application = New Outlook.Application()
+                Try
+                    OutlookMessage = AppOutlook.CreateItem(Outlook.OlItemType.olMailItem)
+                    Dim Recipents As Outlook.Recipients = OutlookMessage.Recipients
+                    Recipents.Add("support@fidelissecurity.com")
+                    OutlookMessage.Subject = "Fidelis Endpoint Application Logs"
+                    OutlookMessage.Body = "Please find the attached logs for current issues"
+                    Dim myAttachments = OutlookMessage.Attachments
+                    myAttachments.Add(globalZip)
+                    OutlookMessage.BodyFormat = Outlook.OlBodyFormat.olFormatHTML
+                    OutlookMessage.Display()
+                Catch ex As Exception
+                    MessageBox.Show("Mail could Not be sent") 'if you dont want this message, simply delete this line 
+                Finally
+                    OutlookMessage = Nothing
+                    AppOutlook = Nothing
+                End Try
+
+            End If
+        Catch ex As Exception
+            MessageBox.Show("Unable to open email client, please manually send logs.")
+        End Try
+    End Sub
 End Class

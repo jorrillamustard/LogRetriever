@@ -33,6 +33,7 @@ Partial Class zipSettings
         Me.chkSelectAll = New System.Windows.Forms.CheckBox()
         Me.txtDays = New System.Windows.Forms.TextBox()
         Me.Label3 = New System.Windows.Forms.Label()
+        Me.btnEmail = New System.Windows.Forms.Button()
         Me.SuspendLayout()
         '
         'lstOptions
@@ -128,11 +129,22 @@ Partial Class zipSettings
         Me.Label3.TabIndex = 9
         Me.Label3.Text = "Days:"
         '
+        'btnEmail
+        '
+        Me.btnEmail.Location = New System.Drawing.Point(101, 279)
+        Me.btnEmail.Name = "btnEmail"
+        Me.btnEmail.Size = New System.Drawing.Size(80, 27)
+        Me.btnEmail.TabIndex = 10
+        Me.btnEmail.Text = "Email"
+        Me.btnEmail.UseVisualStyleBackColor = True
+        Me.btnEmail.Visible = False
+        '
         'zipSettings
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(634, 322)
+        Me.Controls.Add(Me.btnEmail)
         Me.Controls.Add(Me.Label3)
         Me.Controls.Add(Me.txtDays)
         Me.Controls.Add(Me.chkSelectAll)
@@ -161,4 +173,5 @@ Partial Class zipSettings
     Friend WithEvents chkSelectAll As CheckBox
     Friend WithEvents txtDays As TextBox
     Friend WithEvents Label3 As Label
+    Friend WithEvents btnEmail As Button
 End Class
