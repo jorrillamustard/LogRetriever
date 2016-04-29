@@ -34,6 +34,7 @@ Partial Class zipSettings
         Me.txtDays = New System.Windows.Forms.TextBox()
         Me.Label3 = New System.Windows.Forms.Label()
         Me.btnEmail = New System.Windows.Forms.Button()
+        Me.chkPreSix = New System.Windows.Forms.CheckBox()
         Me.SuspendLayout()
         '
         'lstOptions
@@ -139,11 +140,22 @@ Partial Class zipSettings
         Me.btnEmail.UseVisualStyleBackColor = True
         Me.btnEmail.Visible = False
         '
+        'chkPreSix
+        '
+        Me.chkPreSix.AutoSize = True
+        Me.chkPreSix.Location = New System.Drawing.Point(12, 12)
+        Me.chkPreSix.Name = "chkPreSix"
+        Me.chkPreSix.Size = New System.Drawing.Size(131, 21)
+        Me.chkPreSix.TabIndex = 11
+        Me.chkPreSix.Text = "5.8.1 and under"
+        Me.chkPreSix.UseVisualStyleBackColor = True
+        '
         'zipSettings
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(634, 322)
+        Me.Controls.Add(Me.chkPreSix)
         Me.Controls.Add(Me.btnEmail)
         Me.Controls.Add(Me.Label3)
         Me.Controls.Add(Me.txtDays)
@@ -174,4 +186,5 @@ Partial Class zipSettings
     Friend WithEvents txtDays As TextBox
     Friend WithEvents Label3 As Label
     Friend WithEvents btnEmail As Button
+    Friend WithEvents chkPreSix As CheckBox
 End Class

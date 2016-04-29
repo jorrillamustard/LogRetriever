@@ -7,6 +7,9 @@ Imports Outlook = Microsoft.Office.Interop.Outlook
 Public Class zipSettings
     Dim format As String = "M-d-yyyy-HH-mm-ss"
     Dim globalZip As String
+    Dim apppath As String = "ProgramData\Fidelis\Endpoint\"
+    Dim SSapppath1 As String = "$\Program Files\Fidelis\Endpoint\SiteServer"
+    Dim SSapppath2 As String = "$\Program Files\Fidelis\Endpoint\SiteServer"
 
 
     Dim cAppConfig As Configuration = ConfigurationManager.OpenExeConfiguration(My.Application.Info.DirectoryPath + "\LogRetriever.exe")
@@ -24,8 +27,8 @@ Public Class zipSettings
         'MessageBox.Show(computer)
         For Each c In "ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray()
             If flag = False Then
-                SS = "\\" + computer + "\" + c + "$\Program Files\Fidelis\Endpoint\SiteServer"
-                SS2 = "\\" + computer + "\" + c + "$\Program Files\Fidelis\Endpoint\SiteServer\"
+                SS = "\\" + computer + "\" + c + SSapppath1
+                SS2 = "\\" + computer + "\" + c + SSapppath2
                 '  MessageBox.Show(SS + " " + SS2)
                 If (Not Directory.Exists(SS)) Then
                     flag = False
@@ -33,7 +36,7 @@ Public Class zipSettings
                 Else
                     flag = True
                     'MessageBox.Show(SS)
-                    Return "\\" + computer + "\" + c + "$\Program Files\Fidelis\Endpoint\SiteServer\"
+                    Return "\\" + computer + "\" + c + SSapppath1
 
                 End If
 
@@ -41,7 +44,7 @@ Public Class zipSettings
                     flag = False
                 Else
                     flag = True
-                    Return "\\" + computer + "\" + c + "$\Program Files\Fidelis\Endpoint\SiteServer\"
+                    Return "\\" + computer + "\" + c + SSapppath2
                 End If
             Else
                 GoTo endoffunc
@@ -114,7 +117,7 @@ endoffunc:
 
             For Each w In WM
 
-                R1WMLogs = "\\" + w + "\C$\ProgramData\Fidelis\Endpoint\"
+                R1WMLogs = "\\" + w + "\C$\" + apppath
                 'MessageBox.Show(R1WMLogs)
                 For Each f In Directory.GetFiles(R1WMLogs, t + ".*", SearchOption.TopDirectoryOnly)
 
@@ -131,10 +134,10 @@ endoffunc:
     'Gathers and Zips the logs in the temp folder - Localhost
     Private Function zip()
         Dim count As Integer = count + 1
-        Dim R1Logs As String = "C:\ProgramData\Fidelis\Endpoint\"
+        Dim R1Logs As String = "C:\" + apppath
         Dim ProcLogs As String = My.Computer.Registry.GetValue(
     "HKEY_LOCAL_MACHINE\SOFTWARE\AccessData\PStore\EvidenceProcessor", "processingstatedirectory", Nothing)
-        Dim R1Logs2 As String = "C:\ProgramData\Fidelis\Endpoint\"
+        Dim R1Logs2 As String = "C:\" + apppath
         Dim R1SSLogs As String = getSSDirectory()
         Dim zipPath1 As String = "C:\Users\" + Environment.UserName + "\Documents\" + Now.ToString(format) + "FELogs" + count.ToString + ".zip"
         Dim temp As String = "C:\Users\" + Environment.UserName + "\Documents\FETemp\"
@@ -197,8 +200,8 @@ endoffunc:
         Dim ProcLogs As String
         Dim R1SSLogs As String = ""
         Dim count As Integer = count + 1
-        Dim R1WCFLogs As String = "\\" + WCFServer + "\C$\ProgramData\Fidelis\Endpoint\"
-        Dim R1Logs2 As String = "\\" + ProcServer + "\C$\ProgramData\Fidelis\Endpoint\"
+        Dim R1WCFLogs As String = "\\" + WCFServer + "\C$\" + apppath
+        Dim R1Logs2 As String = "\\" + ProcServer + "\C$\" + apppath
         Dim R1MapLogs As String = ""
         Dim R1WMLogs As String = ""
 
@@ -210,10 +213,15 @@ endoffunc:
             ProcLogs = My.Computer.Registry.GetValue(
     "HKEY_LOCAL_MACHINE\SOFTWARE\AccessData\PStore\EvidenceProcessor", "processingstatedirectory", Nothing)
         Else
-            'ProcLogs = asSettings.Settings.Item("ProcessingLogPath").Value
-            ProcLogs = "\\" + ProcServer + "\C$\ProgramData\Fidelis\Endpoint\"
+            If chkPreSix.Checked = True Then
+                ProcLogs = asSettings.Settings.Item("ProcessingLogPath").Value
+                ProcLogs = "\\" + ProcServer + "\" + ProcLogs.Replace(":", "$")
+            Else
+                ProcLogs = "\\" + ProcServer + "\C$\" + apppath
+            End If
 
         End If
+
 
         'Get the location of the Site Server Logs
         If SSServer = "localhost" Then
@@ -244,7 +252,7 @@ endoffunc:
                 ElseIf item.ToString = "WorkManager" Then
 
                     WMLogs(item)
-                    ' R1WMLogs = "\\" + WMServer + "\C$\ProgramData\Fidelis\Endpoint\"
+                    ' R1WMLogs = "\\" + WMServer + "\C$\" + apppath
                     ' For Each f In Directory.GetFiles(R1WMLogs, item + ".*", SearchOption.AllDirectories)
                     'If File.Exists(f) And Not WMServer = "localhost" Then
                     'My.Computer.FileSystem.CopyFile(f, Path.Combine(temp, Path.GetFileName(f)), True)
@@ -276,7 +284,7 @@ endoffunc:
                     If MAPServer = "localhost" Then
 
                     Else
-                        R1MapLogs = "\\" + MAPServer + "\C$\ProgramData\Fidelis\Endpoint\"
+                        R1MapLogs = "\\" + MAPServer + "\C$\" + apppath
                         For Each f In Directory.GetFiles(R1MapLogs, item + ".*", SearchOption.AllDirectories)
                             If File.Exists(f) And Not MAPServer = "localhost" Then
                                 My.Computer.FileSystem.CopyFile(f, Path.Combine(temp, Path.GetFileName(f)), True)
@@ -287,7 +295,7 @@ endoffunc:
                     If TBServer = "localhost" Then
 
                     Else
-                        Dim TBLogs = "\\" + TBServer + "\C$\ProgramData\Fidelis\Endpoint\"
+                        Dim TBLogs = "\\" + TBServer + "\C$\" + apppath
                         For Each f In Directory.GetFiles(TBLogs, item + ".*", SearchOption.AllDirectories)
                             If File.Exists(f) And Not TBServer = "localhost" Then
                                 My.Computer.FileSystem.CopyFile(f, Path.Combine(temp, Path.GetFileName(f)), True)
@@ -434,5 +442,30 @@ endoffunc:
         Catch ex As Exception
             MessageBox.Show("Unable to open email client, please manually send logs.")
         End Try
+    End Sub
+
+    Private Sub chkPreSix_CheckedChanged(sender As Object, e As EventArgs) Handles chkPreSix.CheckedChanged
+        If chkPreSix.Checked = True Then
+            Dim itemsToMove = (From i In lstOptions.Items).ToArray()
+            For Each item In itemsToMove
+                If item.ToString = "felt" Then
+                    lstOptions.Items.Remove(item)
+                ElseIf item.ToString = "ResultService" Then
+                    lstOptions.Items.Remove(item)
+                End If
+            Next
+            apppath = "Users\Public\Documents\Resolution1Logs\"
+            SSapppath1 = "$\Program Files\Resolution1\SiteServer"
+            SSapppath2 = "$\Program Files\AccessData\SiteServer\"
+
+
+        ElseIf Not chkPreSix.Checked Then
+            lstOptions.Items.Add("felt")
+            lstOptions.Items.Add("ResultService")
+            apppath = "ProgramData\Fidelis\Endpoint\"
+            SSapppath1 = "$\Program Files\Fidelis\Endpoint\SiteServer"
+            SSapppath2 = "$\Program Files\Fidelis\Endpoint\SiteServer"
+            lstOptions.Sorted = True
+        End If
     End Sub
 End Class
