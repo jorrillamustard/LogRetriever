@@ -12,9 +12,7 @@ Public Class zipSettings
     Dim cAppConfig As Configuration = ConfigurationManager.OpenExeConfiguration(My.Application.Info.DirectoryPath + "\LogRetriever.exe")
     Dim asSettings As AppSettingsSection = cAppConfig.AppSettings
 
-    Private Sub zipSettings_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
-    End Sub
 
     'Checks for the location of SS logs
     Private Function checkLog(computer As String)
@@ -26,8 +24,8 @@ Public Class zipSettings
         'MessageBox.Show(computer)
         For Each c In "ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray()
             If flag = False Then
-                SS = "\\" + computer + "\" + c + "$\Program Files\Resolution1\SiteServer"
-                SS2 = "\\" + computer + "\" + c + "$\Program Files\AccessData\SiteServer\"
+                SS = "\\" + computer + "\" + c + "$\Program Files\Fidelis\Endpoint\SiteServer"
+                SS2 = "\\" + computer + "\" + c + "$\Program Files\Fidelis\Endpoint\SiteServer\"
                 '  MessageBox.Show(SS + " " + SS2)
                 If (Not Directory.Exists(SS)) Then
                     flag = False
@@ -35,7 +33,7 @@ Public Class zipSettings
                 Else
                     flag = True
                     'MessageBox.Show(SS)
-                    Return "\\" + computer + "\" + c + "$\Program Files\Resolution1\SiteServer\"
+                    Return "\\" + computer + "\" + c + "$\Program Files\Fidelis\Endpoint\SiteServer\"
 
                 End If
 
@@ -43,7 +41,7 @@ Public Class zipSettings
                     flag = False
                 Else
                     flag = True
-                    Return "\\" + computer + "\" + c + "$\Program Files\AccessData\SiteServer\"
+                    Return "\\" + computer + "\" + c + "$\Program Files\Fidelis\Endpoint\SiteServer\"
                 End If
             Else
                 GoTo endoffunc
@@ -58,7 +56,14 @@ endoffunc:
     Function getSSDirectory()
         Dim readValue = My.Computer.Registry.GetValue(
     "HKEY_LOCAL_MACHINE\SOFTWARE\AccessData\PStore\Services", "INSTALLDIR", Nothing)
-        Return readValue.ToString + "\SiteServer\"
+
+        If (Not Directory.Exists(readValue.ToString + "\SiteServer\")) Then
+            Return checkLog("localhost")
+        Else
+            Return readValue.ToString + "\SiteServer\"
+        End If
+
+
     End Function
 
     'Gets logs from Child Site Servers
@@ -109,7 +114,7 @@ endoffunc:
 
             For Each w In WM
 
-                R1WMLogs = "\\" + w + "\C$\Users\Public\Documents\Resolution1Logs\"
+                R1WMLogs = "\\" + w + "\C$\ProgramData\Fidelis\Endpoint\"
                 'MessageBox.Show(R1WMLogs)
                 For Each f In Directory.GetFiles(R1WMLogs, t + ".*", SearchOption.TopDirectoryOnly)
 
@@ -126,13 +131,13 @@ endoffunc:
     'Gathers and Zips the logs in the temp folder - Localhost
     Private Function zip()
         Dim count As Integer = count + 1
-        Dim R1Logs As String = "C:\Users\Public\Documents\Resolution1Logs\"
+        Dim R1Logs As String = "C:\ProgramData\Fidelis\Endpoint\"
         Dim ProcLogs As String = My.Computer.Registry.GetValue(
     "HKEY_LOCAL_MACHINE\SOFTWARE\AccessData\PStore\EvidenceProcessor", "processingstatedirectory", Nothing)
-        Dim R1Logs2 As String = "C:\Users\Public\Documents\AccessData\"
+        Dim R1Logs2 As String = "C:\ProgramData\Fidelis\Endpoint\"
         Dim R1SSLogs As String = getSSDirectory()
-        Dim zipPath1 As String = "C:\Users\" + Environment.UserName + "\Documents\" + Now.ToString(format) + "R1Logs" + count.ToString + ".zip"
-        Dim temp As String = "C:\Users\" + Environment.UserName + "\Documents\LRTemp\"
+        Dim zipPath1 As String = "C:\Users\" + Environment.UserName + "\Documents\" + Now.ToString(format) + "FELogs" + count.ToString + ".zip"
+        Dim temp As String = "C:\Users\" + Environment.UserName + "\Documents\FETemp\"
         Dim temp2 As String = temp + "Site_Server.log"
 
 
@@ -192,21 +197,21 @@ endoffunc:
         Dim ProcLogs As String
         Dim R1SSLogs As String = ""
         Dim count As Integer = count + 1
-        Dim R1WCFLogs As String = "\\" + WCFServer + "\C$\Users\Public\Documents\Resolution1Logs\"
-        Dim R1Logs2 As String = "\\" + ProcServer + "\C$\Users\Public\Documents\AccessData\"
+        Dim R1WCFLogs As String = "\\" + WCFServer + "\C$\ProgramData\Fidelis\Endpoint\"
+        Dim R1Logs2 As String = "\\" + ProcServer + "\C$\ProgramData\Fidelis\Endpoint\"
         Dim R1MapLogs As String = ""
         Dim R1WMLogs As String = ""
 
 
-        Dim zipPath1 As String = "C:\Users\" + Environment.UserName + "\Documents\" + Now.ToString(format) + "R1Logs.zip"
+        Dim zipPath1 As String = "C:\Users\" + Environment.UserName + "\Documents\" + Now.ToString(format) + "FELogs.zip"
 
         'Get the location of Processing Logs
         If ProcServer = "localhost" Then
             ProcLogs = My.Computer.Registry.GetValue(
     "HKEY_LOCAL_MACHINE\SOFTWARE\AccessData\PStore\EvidenceProcessor", "processingstatedirectory", Nothing)
         Else
-            ProcLogs = asSettings.Settings.Item("ProcessingLogPath").Value
-            ProcLogs = "\\" + ProcServer + "\" + ProcLogs.Replace(":", "$")
+            'ProcLogs = asSettings.Settings.Item("ProcessingLogPath").Value
+            ProcLogs = "\\" + ProcServer + "\C$\ProgramData\Fidelis\Endpoint\"
 
         End If
 
@@ -239,7 +244,7 @@ endoffunc:
                 ElseIf item.ToString = "WorkManager" Then
 
                     WMLogs(item)
-                    ' R1WMLogs = "\\" + WMServer + "\C$\Users\Public\Documents\Resolution1Logs\"
+                    ' R1WMLogs = "\\" + WMServer + "\C$\ProgramData\Fidelis\Endpoint\"
                     ' For Each f In Directory.GetFiles(R1WMLogs, item + ".*", SearchOption.AllDirectories)
                     'If File.Exists(f) And Not WMServer = "localhost" Then
                     'My.Computer.FileSystem.CopyFile(f, Path.Combine(temp, Path.GetFileName(f)), True)
@@ -271,7 +276,7 @@ endoffunc:
                     If MAPServer = "localhost" Then
 
                     Else
-                        R1MapLogs = "\\" + MAPServer + "\C$\Users\Public\Documents\AccessData\"
+                        R1MapLogs = "\\" + MAPServer + "\C$\ProgramData\Fidelis\Endpoint\"
                         For Each f In Directory.GetFiles(R1MapLogs, item + ".*", SearchOption.AllDirectories)
                             If File.Exists(f) And Not MAPServer = "localhost" Then
                                 My.Computer.FileSystem.CopyFile(f, Path.Combine(temp, Path.GetFileName(f)), True)
@@ -282,7 +287,7 @@ endoffunc:
                     If TBServer = "localhost" Then
 
                     Else
-                        Dim TBLogs = "\\" + TBServer + "\C$\Users\Public\Documents\Resolution1Logs\"
+                        Dim TBLogs = "\\" + TBServer + "\C$\ProgramData\Fidelis\Endpoint\"
                         For Each f In Directory.GetFiles(TBLogs, item + ".*", SearchOption.AllDirectories)
                             If File.Exists(f) And Not TBServer = "localhost" Then
                                 My.Computer.FileSystem.CopyFile(f, Path.Combine(temp, Path.GetFileName(f)), True)

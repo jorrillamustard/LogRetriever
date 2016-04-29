@@ -40,7 +40,7 @@ Partial Class zipSettings
         '
         Me.lstOptions.FormattingEnabled = True
         Me.lstOptions.ItemHeight = 16
-        Me.lstOptions.Items.AddRange(New Object() {"AnnotationConversionLog", "BusinessServices", "BusinessServicesCommon", "BusinessServicesCommon_Endpoints", "BusinessServicesCommon_EndpointTrace", "BusinessServicesCommon_StabilityMonitoring", "DatabaseUpgrade", "Infrastructure", "IntegrationService", "License", "MAP_log", "Orchestration", "ProcessingHost_error", "ProcessingHost_info", "ProcessingManager_info", "ProductionSetObjectConversionLog", "ProcessingServices", "SearchLog", "site_server", "ThreatBridge", "WorkDistribution", "WorkManager"})
+        Me.lstOptions.Items.AddRange(New Object() {"AnnotationConversionLog", "BusinessServices", "BusinessServicesCommon", "BusinessServicesCommon_Endpoints", "BusinessServicesCommon_EndpointTrace", "BusinessServicesCommon_StabilityMonitoring", "DatabaseUpgrade", "felt", "Infrastructure", "IntegrationService", "License", "MAP_log", "Orchestration", "ProcessingHost_error", "ProcessingHost_info", "ProcessingManager_info", "ProductionSetObjectConversionLog", "ProcessingServices", "ResultService", "SearchLog", "site_server", "ThreatBridge", "ThreatLookup", "WorkDistribution", "WorkManager"})
         Me.lstOptions.Location = New System.Drawing.Point(12, 63)
         Me.lstOptions.Name = "lstOptions"
         Me.lstOptions.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended
